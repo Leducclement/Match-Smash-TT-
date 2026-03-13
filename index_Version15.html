@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>🏓 Smash Tennis de Table</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#eef2f7;
+      margin:0;
+      padding:20px;
+      text-align:center;
+    }
+
+    .container{
+      max-width:900px;
+      margin:auto;
+      background:white;
+      padding:30px;
+      border-radius:15px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.15);
+    }
+
+    h1{
+      margin-top:0;
+    }
+
+    .score{
+      font-size:80px;
+      font-weight:bold;
+      margin:20px 0;
+      color:#2c3e50;
+    }
+
+    .buttons{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:15px;
+    }
+
+    button{
+      padding:25px;
+      font-size:22px;
+      border:none;
+      border-radius:12px;
+      cursor:pointer;
+    }
+
+    .point0{background:#9e9e9e;color:white;}
+    .point1{background:#4CAF50;color:white;}
+    .point10{background:#FFC107;}
+    .point100{background:#F44336;color:white;}
+
+    .controls{
+      margin-top:25px;
+      display:flex;
+      justify-content:center;
+      gap:15px;
+    }
+
+    .undo{background:#ff9800;color:white;}
+    .reset{background:#3f51b5;color:white;}
+
+    .stats{
+      margin-top:30px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:15px;
+    }
+
+    .statbox{
+      background:#f7f7f7;
+      padding:15px;
+      border-radius:10px;
+      font-size:20px;
+    }
+
+    .rate{
+      grid-column:span 2;
+      font-size:26px;
+      font-weight:bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏓 Smash Tennis de Table</h1>
+    <div class="score" id="score">0</div>
+    <div class="buttons">
+      <button class="point0" onclick="addPoints(0)">Faute<br>0 point</button>
+      <button class="point1" onclick="addPoints(1)">Balle renvoyée<br>1 point</button>
+      <button class="point10" onclick="addPoints(10)">1ère cordelette<br>10 points</button>
+      <button class="point100" onclick="addPoints(100)">2ème cordelette<br>100 points</button>
+    </div>
+    <div class="controls">
+      <button class="undo" onclick="undo()">↩ Annuler</button>
+      <button class="reset" onclick="resetScore()">🔄 Reset</button>
+    </div>
+    <div class="stats">
+      <div class="statbox">Frappes<br><strong id="shots">0</strong></div>
+      <div class="statbox">Smash réussis<br><strong id="success">0</strong></div>
+      <div class="statbox">0 point<br><strong id="stat0">0</strong></div>
+      <div class="statbox">1 point<br><strong id="stat1">0</strong></div>
+      <div class="statbox">10 points<br><strong id="stat10">0</strong></div>
+      <div class="statbox">100 points<br><strong id="stat100">0</strong></div>
+      <div class="statbox rate">Taux de réussite : <span id="rate">0</span> %</div>
+    </div>
+  </div>
+
+  <script>
+    let score = 0
+    let history = []
+
+    let stat0 = 0
+    let stat1 = 0
+    let stat10 = 0
+    let stat100 = 0
+
+    function addPoints(points){
+      history.push(points)
+      score += points
+      if(points === 0) stat0++
+      if(points === 1) stat1++
+      if(points === 10) stat10++
+      if(points === 100) stat100++
+      updateDisplay()
+    }
+
+    function undo(){
+      if(history.length === 0) return
+      let last = history.pop()
+      score -= last
+      if(last === 0) stat0--
+      if(last === 1) stat1--
+      if(last === 10) stat10--
+      if(last === 100) stat100--
+      updateDisplay()
+    }
+
+    function resetScore(){
+      score = 0
+      history = []
+      stat0 = 0
+      stat1 = 0
+      stat10 = 0
+      stat100 = 0
+      updateDisplay()
+    }
+
+    function updateDisplay(){
+      document.getElementById("score").textContent = score
+      let shots = history.length
+      document.getElementById("shots").textContent = shots
+      document.getElementById("stat0").textContent = stat0
+      document.getElementById("stat1").textContent = stat1
+      document.getElementById("stat10").textContent = stat10
+      document.getElementById("stat100").textContent = stat100
+      let success = stat10 + stat100
+      document.getElementById("success").textContent = success
+      let rate = shots > 0 ? Math.round((success/shots)*100) : 0
+      document.getElementById("rate").textContent = rate
+    }
+
+    updateDisplay()
+  </script>
+</body>
+</html>
